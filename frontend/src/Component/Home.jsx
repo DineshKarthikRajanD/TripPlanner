@@ -9,7 +9,7 @@ export default function Home() {
         <div>
           <ul className="flex gap-5 font-medium mt-3">
             <li>About</li>
-            <li>Service</li>
+            <li>sdfghhgvc</li>
             <li>Pricing</li>
             <li>Contact</li>
           </ul>
