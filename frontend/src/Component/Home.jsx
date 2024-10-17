@@ -9,7 +9,7 @@ export default function Home() {
         <div>
           <ul className="flex gap-5 font-medium mt-3">
             <li>About</li>
-            <li>sdfghhgvc</li>
+            <li>Services</li>
             <li>Pricing</li>
             <li>Contact</li>
           </ul>
@@ -43,7 +43,7 @@ export default function Home() {
           />
         </div>
       </section>
-      <section className="px-4 py-8">
+      <section className="px-4 py-8 ml-10">
         <h1 className="font-bold text-3xl text-center mb-10">
           Unlock Lesser-Known Places of TamilNadu
         </h1>
@@ -61,8 +61,8 @@ export default function Home() {
               wooded slopes, gigantic trees, and misty green meadows.
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/kodaikanal">
+              <button className="p-2 bg-lime-500 mt-3 ml-48">Select Packages</button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -79,8 +79,8 @@ export default function Home() {
               and waterfalls
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/ooty">
+            <button className="p-2 bg-lime-500 mt-3 ml-48">Select Packages</button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -96,8 +96,8 @@ export default function Home() {
               draws pilgrims from far and near.
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/madurai">
+            <button className="p-2 bg-lime-500 mt-3 ml-48">Select Packages</button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -118,8 +118,8 @@ export default function Home() {
               everyone else may all find something to enjoy in Tirunelveli.
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/thirunelveli">
+            <button className="p-2 bg-lime-500 mt-3 ml-48">Select Packages</button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -136,8 +136,8 @@ export default function Home() {
               cosmopolitan vibes – that’s what it is all about!
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/coimbatore">
+            <button className="p-2 bg-lime-500 mt-3 ml-48">Select Packages</button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -160,8 +160,8 @@ export default function Home() {
               of interest for visitors.
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/dindigul">
+            <button className="p-2 bg-lime-500 mt-3 ml-48">Select Packages</button>
             </Link>
           </div>
         </div>

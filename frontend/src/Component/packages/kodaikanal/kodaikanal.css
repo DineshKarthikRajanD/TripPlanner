@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    list-style: none;
+
+}
+
+.main{
+    line-height: 45px;
+    display: flex;
+    font-weight: bold;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    text-align: center;
+    padding-top: 2.5rem;
+    font-family: "Poppins", sans-serif;
+
+}
+
+.main h1{
+    font-size: 3rem;
+}
+
+
+.image img{
+    height: 500px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    border-radius: 30px;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.212);
+}
+
+.full{
+    background-color: #f7f8fd;
+    font-family: "Poppins", sans-serif;
+
+
+}
+.main p{
+    font-weight: 500;
+}
+#p1{
+    padding-top: 5%;
+    line-height: 30px;
+    width: 80%;
+    text-align: center;
+    padding-left: 20%;
+
+}
+
+.pack{
+    padding: 5% 8%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content:space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+.pack__standard{
+    width: 550px;
+    height: 600px;
+    padding: 2rem;
+    /* width:max-content; */
+    background-color: white;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.233);
+    border-radius: 10px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.pack__standard__content{
+    text-align: center;
+    font-weight: bolder;
+    padding: 1rem;
+
+}
+
+.pack__standard__features{
+    border-top: 1px solid rgba(0, 0, 0, 0.329);
+    padding: 30px 0 10px 5px;
+    line-height: 2rem;
+
+}
+
+.pack__standard button{
+    background-color: #0c7ef1;
+    padding: 1rem;
+    width: 80%;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    position: absolute;
+    bottom: 10px;
+    left: 50px;
+}
+
+
+.pack__standard:hover{
+    scale: 1.1;
+    transition: 0.5s;
+    background-color: rgb(0, 0, 0);
+    color: white;
+    .pack__standard__features{
+        border-top: 1px solid white;
+    }
+}
+
+@media only screen and (max-width: 1281px){
+    .pack{
+        padding: 100px 250px;
+        display: flex;
+        justify-content:space-between;
+        align-items: center;
+        gap: 20px;
+    }
+}
+
+
+@media only screen and (max-width: 865px){
+    
+    .pack{
+        padding: 100px 250px;
+        display: flex;
+        justify-content:space-between;
+        align-items: center;
+        gap: 20px;
+    }
+    .pack__standard{
+        min-width: 350px;
+        min-height: 400px;
+        padding: 2rem;
+        background-color: white;
+        box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.233);
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+}
+
+@media only screen and (max-width: 429px){
+    .pack{
+        padding: 100px 50px;
+        display: flex;
+        justify-content:space-between;
+        align-items: center;
+        gap: 20px;
+    }
+    .nav ul a{
+        display: none;
+    }
+    .nav {
+        box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.233);
+        z-index: 1;
+    }
+    .pack__standard{
+        min-width: 250px;
+        min-height: 300px;
+        padding: 2rem;
+        background-color: white;
+        box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.233);
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+
+}
+
+@media only screen and (max-width: 361px){
+    .pack__standard{
+        min-width: 300px;
+        min-height: 300px;
+        padding: 2rem;
+        background-color: white;
+        box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.233);
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    .pack{
+        padding: 100px 35px;
+        display: flex;
+        justify-content:space-between;
+        align-items: center;
+        gap: 20px;
+    }
+}
+
