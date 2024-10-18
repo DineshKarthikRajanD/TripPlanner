@@ -6,5 +6,9 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'dist', // this matches the path in server.js
+    sourcemap: true,
   },
+  server: {
+    sourcemap : true,
+  }
 });
