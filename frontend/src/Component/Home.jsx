@@ -1,30 +1,9 @@
 import { Link } from "react-router-dom";
+import ReviewList from "./review/dispreview";
+
 export default function Home() {
   return (
     <>
-      <nav className="flex justify-between py-3 content-center bg-slate-50 drop-shadow w-full">
-        <div>
-          <h1 className="ml-20 text-3xl font-bold">Travigo</h1>
-        </div>
-        <div>
-          <ul className="flex gap-5 font-medium mt-3">
-            <li>About</li>
-            <li>sdfghhgvc</li>
-            <li>Pricing</li>
-            <li>Contact</li>
-          </ul>
-        </div>
-        <div>
-          <ul className="flex gap-5 mr-14 font-medium">
-            <li>
-              <button className="mt-2">Login</button>
-            </li>
-            <li>
-              <button className="bg-teal-600 p-2 rounded-2xl">Sign up</button>
-            </li>
-          </ul>
-        </div>
-      </nav>
       <section className="flex items-center">
         <div className="ml-20">
           <h1 className="font-bold text-4xl w-2/3 pb-5">
@@ -43,7 +22,7 @@ export default function Home() {
           />
         </div>
       </section>
-      <section className="px-4 py-8">
+      <section className="px-4 py-8 ml-10">
         <h1 className="font-bold text-3xl text-center mb-10">
           Unlock Lesser-Known Places of TamilNadu
         </h1>
@@ -61,8 +40,10 @@ export default function Home() {
               wooded slopes, gigantic trees, and misty green meadows.
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/kodaikanal">
+              <button className="p-2 bg-lime-500 mt-3 ml-48">
+                Select Packages
+              </button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -79,8 +60,10 @@ export default function Home() {
               and waterfalls
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/ooty">
+              <button className="p-2 bg-lime-500 mt-3 ml-48">
+                Select Packages
+              </button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -96,8 +79,10 @@ export default function Home() {
               draws pilgrims from far and near.
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/madurai">
+              <button className="p-2 bg-lime-500 mt-3 ml-48">
+                Select Packages
+              </button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -118,8 +103,10 @@ export default function Home() {
               everyone else may all find something to enjoy in Tirunelveli.
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/tirunelveli">
+              <button className="p-2 bg-lime-500 mt-3 ml-48">
+                Select Packages
+              </button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -136,8 +123,10 @@ export default function Home() {
               cosmopolitan vibes – that’s what it is all about!
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/coimbatore">
+              <button className="p-2 bg-lime-500 mt-3 ml-48">
+                Select Packages
+              </button>
             </Link>
           </div>
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">
@@ -160,32 +149,15 @@ export default function Home() {
               of interest for visitors.
             </p>
             <div className="border-t border-slate-950 mt-8"></div>
-            <Link to="/form">
-              <button className="p-2 bg-lime-500 mt-3 ml-60">Book Now</button>
+            <Link to="/dindigul">
+              <button className="p-2 bg-lime-500 mt-3 ml-48">
+                Select Packages
+              </button>
             </Link>
           </div>
         </div>
       </section>
-      <footer className="bg-black h-36">
-        <div className="flex justify-between">
-          <div className="flex mt-10">
-            <img
-              className="w-10 h-10 mr-8 ml-20"
-              src="https://static-00.iconduck.com/assets.00/twitter-icon-2048x1691-4lpbyo0r.png"
-              alt=""
-            />
-            <img
-              className="w-10 h-10"
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSskbpEX-jqvW2ZslvzHgvtEKykib-oCRvCPA&s"
-              alt=""
-            />
-          </div>
-          <div className="text-white mt-8 mr-20">
-            <h1>© 2024 TRAVIGO PVT. LTD</h1>
-            <p className="mt-2">Country India USA UAE</p>
-          </div>
-        </div>
-      </footer>
+      <ReviewList />
     </>
   );
 }

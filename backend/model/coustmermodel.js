@@ -1,20 +1,19 @@
 import { Schema, model } from "mongoose";
 
-const userSchema = new Schema({
+const customerSchema = new Schema({
   name: {
     type: String,
     required: true,
-  },
-  email: {
+    minlength: 3,
+},
+email: {
     type: String,
     required: true,
-    unique: true, // Email should be unique for each user
-  },
-  mobile: {
-    type: Number,
-    required: true,
-  },
-});
+    unique: true,
+},
+// Add other fields as needed...
+}, { timestamps: true });
 
-const user = model("coustmer_details", userSchema);
-export default user;
+const CustomerDetails = model("CustomerDetails", customerSchema);
+
+export default CustomerDetails;
