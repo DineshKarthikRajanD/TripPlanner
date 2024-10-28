@@ -6,7 +6,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     () => !!localStorage.getItem("authToken")
   );
-  const [searchQuery, setSearchQuery] = useState(""); // Initialize with an empty string
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();

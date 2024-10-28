@@ -64,6 +64,8 @@ const loginUser = async (req, res) => {
   }
 };
 
+
+
 const coustmer_details = async (req, res) => {
   try {
     // Destructure and validate input data
