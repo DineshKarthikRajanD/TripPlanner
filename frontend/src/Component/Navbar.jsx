@@ -7,9 +7,6 @@ const Navbar = () => {
     () => !!localStorage.getItem("authToken")
   );
 
-  const [username, setUsername] = useState(
-    localStorage.getItem("username") || ""
-  );
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [username, setUsername] = useState(localStorage.getItem("name") || "");
 
@@ -42,7 +39,7 @@ const Navbar = () => {
       localStorage.removeItem("name");
       setIsLoggedIn(false);
       setUsername("");
-      setEmail(""); // Clear email
+      setEmail("");
       navigate("/");
     }
   };
