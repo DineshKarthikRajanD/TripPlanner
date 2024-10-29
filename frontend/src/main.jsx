@@ -36,6 +36,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/packages/:id"
+            element={
+              <ProtectedRoute>
+                <Package />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/api/booked" element={<BookedPackagesContainer />} />
           <Route path="/review" element={<ReviewForm />} />
           <Route path="/about" element={<About />} />

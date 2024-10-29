@@ -6,8 +6,13 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     () => !!localStorage.getItem("authToken")
   );
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
+  const [email, setEmail] = useState(localStorage.getItem("email") || ""); // Retrieve email
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -15,6 +20,8 @@ const Navbar = () => {
     const handleStorageChange = () => {
       const token = localStorage.getItem("authToken");
       setIsLoggedIn(!!token);
+      setUsername(localStorage.getItem("username") || "");
+      setEmail(localStorage.getItem("email") || ""); // Update email on storage change
     };
 
     window.addEventListener("storage", handleStorageChange);
@@ -26,8 +33,12 @@ const Navbar = () => {
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem("authToken");
+      localStorage.removeItem("username");
+      localStorage.removeItem("email"); // Remove email from localStorage
       setIsLoggedIn(false);
-      navigate("/login");
+      setUsername("");
+      setEmail(""); // Clear email
+      navigate("/");
     }
   };
 
@@ -44,17 +55,12 @@ const Navbar = () => {
       const response = await axios.get(
         `http://localhost:5000/api/places?query=${value}`
       );
-      console.log("Search results:", response.data);
       setSearchResults(response.data || []);
     } catch (error) {
       console.error("Error fetching search results:", error);
       setSearchResults([]);
     }
   };
-
-  const filteredResults = searchResults.filter((place) =>
-    place?.name.toLowerCase().startsWith(searchQuery.toLowerCase())
-  );
 
   const handlePlaceSelect = (place) => {
     setSearchQuery(place.name);
@@ -63,11 +69,13 @@ const Navbar = () => {
   };
 
   const handleSearchSubmit = () => {
-    setSearchQuery(" ");
     if (searchQuery) {
       navigate(`/packages/${searchQuery}`);
+      setSearchQuery("");
     }
   };
+
+  const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
   return (
     <div>
@@ -108,13 +116,36 @@ const Navbar = () => {
             </>
           )}
         </div>
+
         <div>
           <ul className="flex gap-5 mr-14 font-medium">
             {isLoggedIn ? (
-              <li>
-                <button className="mt-2" onClick={handleLogout}>
-                  Logout
-                </button>
+              <li className="relative">
+                <button
+                  onClick={toggleDropdown}
+                  className="flex items-center justify-center w-4 h-4 rounded-full bg-green-500 mt-2"
+                  title="Account options"
+                ></button>
+                {showDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
+                    <div className="block px-4 py-2 text-gray-600">
+                      {email} {/* Display email here */}
+                    </div>
+                    <Link
+                      to="/api/booked"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      Your Profile
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
               </li>
             ) : (
               <>
@@ -136,10 +167,10 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {filteredResults.length > 0 && (
+      {searchResults.length > 0 && (
         <div className="bg-white shadow-md mt-2 rounded-md">
           <ul>
-            {filteredResults.map((place) => (
+            {searchResults.map((place) => (
               <li
                 key={place?._id}
                 className="p-2 border-b hover:bg-gray-100 cursor-pointer"

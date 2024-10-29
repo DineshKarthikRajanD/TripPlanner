@@ -88,18 +88,6 @@ const BookedPackagesContainer = ({ onReviewSubmit }) => {
                   </li>
                 ))}
               </ul>
-              <div className="mt-4">
-                <h4 className="font-semibold">Customer Details:</h4>
-                <p>
-                  <strong>Name:</strong> {pkg.customer.name}
-                </p>
-                <p>
-                  <strong>Email:</strong> {pkg.customer.email}
-                </p>
-                <p>
-                  <strong>Mobile:</strong> {pkg.customer.mobile}
-                </p>
-              </div>
 
               {/* Review Button */}
               <button
@@ -127,7 +115,7 @@ const BookedPackagesContainer = ({ onReviewSubmit }) => {
               placeId={selectedPackage.packageDetails._id}
               userId={selectedPackage.customer.name}
               onClose={closeModal}
-              onReviewSubmit={handleReviewSubmit} // Pass the handler to ReviewForm
+              onReviewSubmit={handleReviewSubmit}
             />
           </div>
         </div>
