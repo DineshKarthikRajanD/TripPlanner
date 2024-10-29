@@ -3,7 +3,7 @@ import User from "../model/loginmodel.js";
 import Place from "../model/placeModel.js"; 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import Package from "../model/packageModel.js";
+import Package from "../model/packagesModel.js";
 import Review from "../model/reviewmodel.js";
 import mongoose from "mongoose";
 import PayModel from '../model/payModel.js';
