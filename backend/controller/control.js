@@ -83,10 +83,11 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+    const name = user.name;
 
     // Generate a token
     const token = jwt.sign({ userId: user._id }, "your_jwt_secret", { expiresIn: "1h" });
-    res.json({ message: "Login successful", token });
+    res.json({ message: "Login successful", token, name });
   } catch (error) {
     console.error('Error logging in user:', error);
     res.status(500).json({ message: "Server Error: " + error.message });
@@ -148,7 +149,8 @@ const coustmer_details = async (req, res) => {
 
 const userData = async (req, res) => {
   try {
-    const data = await user.find();
+    const data = await UserModel.find({});
+    console.log(data);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: "An error occurred: " + error.message });
@@ -158,7 +160,7 @@ const userData = async (req, res) => {
 const userDelete = async (req, res) => {
   const email = req.params.email;
   try {
-    const result = await user.findOneAndDelete({ email });
+    const result = await UserModel.findOneAndDelete({ email });
     if (result) {
       res.status(200).send("Deleted Successfully");
     } else {
@@ -173,7 +175,7 @@ const updateData = async (req, res) => {
   const email = req.params.email;
   const { name, mobile } = req.body;
   try {
-    const result = await user.findOneAndUpdate({ email }, { name, mobile }, { new: true });
+    const result = await UserModel.findOneAndUpdate({ email }, { name, mobile }, { new: true });
     if (result) {
       res.status(200).send("Updated Successfully");
     } else {
@@ -345,7 +347,9 @@ const dispReview = async (req, res) => {
 
 const bookedcont = async (req, res) => {
   try {
-    const customerData = await PayModel.find();
+    console.log(req.params.name);
+    
+    const customerData = await PayModel.find({ name: req.params.name });
     const packageData = await Package.find();
 
     const packageMap = packageData.reduce((map, pkg) => {
@@ -360,6 +364,7 @@ const bookedcont = async (req, res) => {
 
     res.json(bookedPackages);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "An error occurred: " + error.message });
   }
 };

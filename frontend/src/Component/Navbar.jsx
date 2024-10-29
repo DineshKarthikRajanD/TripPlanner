@@ -6,10 +6,13 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     () => !!localStorage.getItem("authToken")
   );
+
   const [username, setUsername] = useState(
     localStorage.getItem("username") || ""
   );
-  const [email, setEmail] = useState(localStorage.getItem("email") || ""); // Retrieve email
+  const [email, setEmail] = useState(localStorage.getItem("email") || "");
+  const [username, setUsername] = useState(localStorage.getItem("name") || "");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -21,7 +24,8 @@ const Navbar = () => {
       const token = localStorage.getItem("authToken");
       setIsLoggedIn(!!token);
       setUsername(localStorage.getItem("username") || "");
-      setEmail(localStorage.getItem("email") || ""); // Update email on storage change
+      setEmail(localStorage.getItem("email") || "");
+      setUsername(localStorage.getItem("name") || "");
     };
 
     window.addEventListener("storage", handleStorageChange);
@@ -34,7 +38,8 @@ const Navbar = () => {
     if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem("authToken");
       localStorage.removeItem("username");
-      localStorage.removeItem("email"); // Remove email from localStorage
+      localStorage.removeItem("email");
+      localStorage.removeItem("name");
       setIsLoggedIn(false);
       setUsername("");
       setEmail(""); // Clear email
@@ -120,33 +125,36 @@ const Navbar = () => {
         <div>
           <ul className="flex gap-5 mr-14 font-medium">
             {isLoggedIn ? (
-              <li className="relative">
-                <button
-                  onClick={toggleDropdown}
-                  className="flex items-center justify-center w-4 h-4 rounded-full bg-green-500 mt-2"
-                  title="Account options"
-                ></button>
-                {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
-                    <div className="block px-4 py-2 text-gray-600">
-                      {email} {/* Display email here */}
+              <>
+                <h5>{username}</h5>
+                <li className="relative">
+                  <button
+                    onClick={toggleDropdown}
+                    className="flex items-center justify-center w-4 h-4 rounded-full bg-green-500 mt-2"
+                    title="Account options"
+                  ></button>
+                  {showDropdown && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
+                      <div className="block px-4 py-2 text-gray-600">
+                        {email} {/* Display email here */}
+                      </div>
+                      <Link
+                        to="/api/booked"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        Your Profile
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
                     </div>
-                    <Link
-                      to="/api/booked"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      Your Profile
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </li>
+                  )}
+                </li>
+              </>
             ) : (
               <>
                 <li>
