@@ -6,7 +6,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     () => !!localStorage.getItem("authToken")
   );
-  const [username, setUsername] = useState(localStorage.getItem("username") || "");
+  const [username, setUsername] = useState(localStorage.getItem("name") || "");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -17,7 +17,7 @@ const Navbar = () => {
     const handleStorageChange = () => {
       const token = localStorage.getItem("authToken");
       setIsLoggedIn(!!token);
-      setUsername(localStorage.getItem("username") || "");
+      setUsername(localStorage.getItem("name") || "");
     };
 
     window.addEventListener("storage", handleStorageChange);
@@ -29,7 +29,7 @@ const Navbar = () => {
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem("authToken");
-      localStorage.removeItem("username");
+      localStorage.removeItem("name");
       setIsLoggedIn(false);
       setUsername("");
       navigate("/");
@@ -118,6 +118,8 @@ const Navbar = () => {
         <div>
           <ul className="flex gap-5 mr-14 font-medium">
             {isLoggedIn ? (
+              <>
+                <h5>{username}</h5>
               <li className="relative">
                 <button
                   onClick={toggleDropdown}
@@ -142,6 +144,7 @@ const Navbar = () => {
                   </div>
                 )}
               </li>
+              </>
             ) : (
               <>
                 <li>

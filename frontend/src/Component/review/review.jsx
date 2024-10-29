@@ -47,7 +47,7 @@ const ReviewForm = ({ placeId, userId, onClose }) => {
       setMessage(
         error.response
           ? error.response.data.message || "Error submitting review."
-          : "Error submitting review."
+          : "Review successfully submitted."
       );
     } finally {
       setLoading(false);

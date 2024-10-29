@@ -57,7 +57,7 @@ app.get("/api/places/search", searchPlaces);
 app.post('/api/packages', addPackage);
 app.get("/api/packages", getPackagesByPlace);
 app.post("/api/reviews", addReview);
-app.get("/api/booked", bookedcont);
+app.get("/api/booked/:name", bookedcont);
 app.get('/api/reviews', dispReview);
 app.put('/api/packages/:id', updatePackage);
 app.post("/payment", coustmer_details);

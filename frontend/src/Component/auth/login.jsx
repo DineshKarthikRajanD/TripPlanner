@@ -1,30 +1,27 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
         formData
       );
-
-      if (res.data?.token) {
+      if (res.data?.token && res.data?.name) {
         localStorage.setItem("authToken", res.data.token);
+        localStorage.setItem("name", res.data.name);
+
         alert(res.data.message);
         setLoading(false);
         navigate("/");
@@ -36,7 +33,6 @@ const Login = () => {
       setError(err.response?.data?.message || "Error during login");
     }
   };
-
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <form
@@ -72,5 +68,4 @@ const Login = () => {
     </div>
   );
 };
-
 export default Login;
