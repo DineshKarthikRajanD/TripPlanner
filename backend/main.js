@@ -33,10 +33,14 @@ dbconnect();
 
 // Middleware setup
 app.use(cors({
-  origin: "http://localhost:5173", 
+  origin: [
+    "https://travellplanner.netlify.app", 
+    "http://localhost:5173"                 
+  ],
   methods: ["GET", "POST", "DELETE", "PUT"],
   credentials: true,
 }));
+
 
 app.use(express.json()); // For parsing application/json
 app.use(bodyParser.json()); // For parsing application/json (optional if using express.json)
