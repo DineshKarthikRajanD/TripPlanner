@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
@@ -10,6 +10,7 @@ const Navbar = () => {
   const [username, setUsername] = useState(localStorage.getItem("name") || "");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [allPlaces, setAllPlaces] = useState([]); // To store the complete list of places
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,6 +30,21 @@ const Navbar = () => {
     };
   }, []);
 
+  // Fetch all places once on load
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const response = await axios.get(
+          "https://tripplanner-2ccq.onrender.com/api/places"
+        );
+        setAllPlaces(response.data || []);
+      } catch (error) {
+        console.error("Error fetching all places:", error);
+      }
+    };
+    fetchPlaces();
+  }, []);
+
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem("authToken");
@@ -42,7 +58,7 @@ const Navbar = () => {
     }
   };
 
-  const handleSearchChange = async (e) => {
+  const handleSearchChange = async(e) => {
     const value = e.target.value;
     setSearchQuery(value);
 
@@ -65,7 +81,7 @@ const Navbar = () => {
   const handlePlaceSelect = (place) => {
     setSearchQuery(place.name);
     setSearchResults([]);
-    navigate(`/${place.name}`);
+    navigate(`/packages/${place.name}`);
   };
 
   const handleSearchSubmit = () => {
@@ -171,7 +187,7 @@ const Navbar = () => {
                   {showDropdown && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
                       <div className="block px-4 py-2 text-gray-600">
-                        {email} {/* Display email here */}
+                        {email}
                       </div>
                       <Link
                         to="/api/booked"
