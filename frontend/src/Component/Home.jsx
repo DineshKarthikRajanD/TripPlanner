@@ -16,7 +16,7 @@ export default function Home() {
         </div>
         <div>
           <img
-            className="max-w-md ml-30"
+            className="max-w-md ml-40"
             src="https://img.freepik.com/premium-vector/travel_23-2148034719.jpg?semt=ais_hybrid"
             alt=""
           />
