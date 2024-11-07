@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
@@ -6,12 +6,11 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     () => !!localStorage.getItem("authToken")
   );
-
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [username, setUsername] = useState(localStorage.getItem("name") || "");
-
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [allPlaces, setAllPlaces] = useState([]); // To store the complete list of places
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,6 +30,21 @@ const Navbar = () => {
     };
   }, []);
 
+  // Fetch all places once on load
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const response = await axios.get(
+          "https://tripplanner-2ccq.onrender.com/api/places"
+        );
+        setAllPlaces(response.data || []);
+      } catch (error) {
+        console.error("Error fetching all places:", error);
+      }
+    };
+    fetchPlaces();
+  }, []);
+
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem("authToken");
@@ -44,7 +58,7 @@ const Navbar = () => {
     }
   };
 
-  const handleSearchChange = async (e) => {
+  const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
 
@@ -53,21 +67,18 @@ const Navbar = () => {
       return;
     }
 
-    try {
-      const response = await axios.get(
-        `https://tripplanner-1.onrender.com/api/places?query=${value}`
-      );
-      setSearchResults(response.data || []);
-    } catch (error) {
-      console.error("Error fetching search results:", error);
-      setSearchResults([]);
-    }
+    // Filter places that start with the search query
+    const filteredResults = allPlaces.filter((place) =>
+      place.name.toLowerCase().startsWith(value.toLowerCase())
+    );
+
+    setSearchResults(filteredResults);
   };
 
   const handlePlaceSelect = (place) => {
     setSearchQuery(place.name);
     setSearchResults([]);
-    navigate(`/${place.name}`);
+    navigate(`/packages/${place.name}`);
   };
 
   const handleSearchSubmit = () => {
@@ -78,6 +89,39 @@ const Navbar = () => {
   };
 
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
+
+  // Voice search handler
+  const handleSpeechSearch = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const allowedLocations = [
+      "Coimbatore",
+      "Ooty",
+      "Kodaikanal",
+      "Dindigul",
+      "Tirunelveli",
+      "Madurai",
+    ];
+    const recognition = new SpeechRecognition();
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      console.log(transcript);
+      const detectedLocation = allowedLocations.find((location) =>
+        transcript.toLowerCase().includes(location.toLowerCase())
+      );
+
+      if (detectedLocation) {
+        setSearchQuery(detectedLocation);
+        handlePlaceSelect({ name: detectedLocation });
+      } else {
+        setSearchQuery(transcript);
+        handleSearchChange({ target: { value: transcript } });
+      }
+    };
+
+    recognition.start();
+  };
 
   return (
     <div>
@@ -122,6 +166,14 @@ const Navbar = () => {
               >
                 Search
               </button>
+              <button
+                type="button"
+                onClick={handleSpeechSearch}
+                className="ml-2 p-2"
+                title="Voice Search"
+              >
+                <span className="material-symbols-outlined">mic</span>
+              </button>
             </>
           )}
         </div>
@@ -140,7 +192,7 @@ const Navbar = () => {
                   {showDropdown && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
                       <div className="block px-4 py-2 text-gray-600">
-                        {email} {/* Display email here */}
+                        {email}
                       </div>
                       <Link
                         to="/api/booked"
