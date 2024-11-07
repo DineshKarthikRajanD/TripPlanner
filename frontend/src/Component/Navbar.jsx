@@ -149,7 +149,6 @@ const Navbar = () => {
               <Link to="/api/booked">Booked</Link>
             </li>
           </ul>
-
           {location.pathname !== "/form" && (
             <>
               <input
@@ -177,7 +176,6 @@ const Navbar = () => {
             </>
           )}
         </div>
-
         <div>
           <ul className="flex gap-5 mr-14 font-medium">
             {isLoggedIn ? (
@@ -230,7 +228,6 @@ const Navbar = () => {
           </ul>
         </div>
       </nav>
-
       {searchResults.length > 0 && (
         <div className="bg-white shadow-md mt-2 rounded-md">
           <ul>
