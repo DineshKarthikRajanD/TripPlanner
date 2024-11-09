@@ -10,7 +10,7 @@ const Navbar = () => {
   const [username, setUsername] = useState(localStorage.getItem("name") || "");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [allPlaces, setAllPlaces] = useState([]); // To store the complete list of places
+  const [allPlaces, setAllPlaces] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,7 +58,7 @@ const Navbar = () => {
     }
   };
 
-  const handleSearchChange = async(e) => {
+  const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
 
@@ -67,15 +67,12 @@ const Navbar = () => {
       return;
     }
 
-    try {
-      const response = await axios.get(
-        `https://tripplanner-2ccq.onrender.com/api/places?query=${value}`
-      );
-      setSearchResults(response.data || []);
-    } catch (error) {
-      console.error("Error fetching search results:", error);
-      setSearchResults([]);
-    }
+    // Filter places where the name starts with the input value
+    const filteredResults = allPlaces.filter((place) =>
+      place.name.toLowerCase().startsWith(value.toLowerCase())
+    );
+
+    setSearchResults(filteredResults);
   };
 
   const handlePlaceSelect = (place) => {
@@ -95,16 +92,24 @@ const Navbar = () => {
 
   // Voice search handler
   const handleSpeechSearch = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;  
-    const allowedLocations = ["Coimbatore", "Ooty", "Kodaikanal", "Dindigul", "Tirunelveli", "Madurai"];
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const allowedLocations = [
+      "Coimbatore",
+      "Ooty",
+      "Kodaikanal",
+      "Dindigul",
+      "Tirunelveli",
+      "Madurai",
+    ];
     const recognition = new SpeechRecognition();
-  
+
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       const detectedLocation = allowedLocations.find((location) =>
         transcript.toLowerCase().includes(location.toLowerCase())
       );
-  
+
       if (detectedLocation) {
         setSearchQuery(detectedLocation);
         handlePlaceSelect({ name: detectedLocation }); // Selects the place based on detected location
@@ -113,10 +118,9 @@ const Navbar = () => {
         handleSearchChange({ target: { value: transcript } }); // Regular search if location not recognized
       }
     };
-  
+
     recognition.start();
   };
-  
 
   return (
     <div>
@@ -162,13 +166,13 @@ const Navbar = () => {
                 Search
               </button>
               <button
-            type="button"
-            onClick={handleSpeechSearch}
-            className="ml-2 p-2"
-            title="Voice Search"
-          >
-            <span className="material-symbols-outlined">mic</span>
-          </button>
+                type="button"
+                onClick={handleSpeechSearch}
+                className="ml-2 p-2"
+                title="Voice Search"
+              >
+                <span className="material-symbols-outlined">mic</span>
+              </button>
             </>
           )}
         </div>
@@ -177,13 +181,15 @@ const Navbar = () => {
           <ul className="flex gap-5 mr-14 font-medium">
             {isLoggedIn ? (
               <>
-                <h5>{username}</h5>
+                <h5 className="mt-4">{username}</h5>
                 <li className="relative">
                   <button
                     onClick={toggleDropdown}
-                    className="flex items-center justify-center w-4 h-4 rounded-full bg-green-500 mt-2"
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500 mt-2 text-2xl"
                     title="Account options"
-                  ></button>
+                  >
+                    {username.charAt(0)}
+                  </button>
                   {showDropdown && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
                       <div className="block px-4 py-2 text-gray-600">
@@ -227,12 +233,12 @@ const Navbar = () => {
       </nav>
 
       {searchResults.length > 0 && (
-        <div className="bg-white shadow-md mt-2 rounded-md">
+        <div className="bg-white ml-[750px] mr-[500px] mt-2 rounded-md">
           <ul>
             {searchResults.map((place) => (
               <li
                 key={place?._id}
-                className="p-2 border-b hover:bg-gray-100 cursor-pointer"
+                className="p-2 border hover:bg-gray-100 cursor-pointer"
                 onClick={() => handlePlaceSelect(place)}
               >
                 {place?.name}

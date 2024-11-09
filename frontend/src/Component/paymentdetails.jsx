@@ -25,6 +25,18 @@ function PaymentDetails() {
     fetchPayments();
   }, []);
 
+  const deletePayment = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/payments/${id}`);
+      setPayments((prevPayments) =>
+        prevPayments.filter((payment) => payment._id !== id)
+      );
+    } catch (error) {
+      console.error("Failed to delete payment:", error);
+      alert("Error deleting payment");
+    }
+  };
+
   if (loading) return <p>Loading payment details...</p>;
   if (error) return <p>{error}</p>;
 
@@ -61,6 +73,12 @@ function PaymentDetails() {
                   <strong>Date:</strong>{" "}
                   {new Date(payment.createdAt).toLocaleDateString()}
                 </p>
+                <button
+                  onClick={() => deletePayment(payment._id)}
+                  className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                >
+                  Delete Payment
+                </button>
               </div>
             ))}
           </div>

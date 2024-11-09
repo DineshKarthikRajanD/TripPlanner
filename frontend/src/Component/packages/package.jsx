@@ -1,17 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 const placeImages = {
-  ooty: "https://tempotravellerrentindelhi.wordpress.com/wp-content/uploads/2020/08/1585825644_ooty.jpg",
-  coimbatore:
-    "https://www.purvaland.com/wp-content/uploads/2024/07/Coimbatore1920X704px-1-scaled.webp",
-  dindigul: "https://wikitravel.org/upload/shared//5/5b/Dindigul_Banner.jpg",
-  kodaikanal:
-    "https://www.clubmahindra.com/blog/media/section_images/banner1920-5c13a545b62beb9.webp",
-  madurai:
-    "https://upload.wikimedia.org/wikipedia/commons/0/04/Dawn_Madurai.jpg",
-  tirunelveli:
-    "https://jumborealty.co.in/wp-content/uploads/2023/12/thirunelveli-town.jpg",
+  /* your placeImages object here */
 };
 
 const Package = () => {
@@ -24,15 +15,20 @@ const Package = () => {
     const fetchPackages = async () => {
       try {
         const response = await fetch(
-          `https://tripplanner-2ccq.onrender.com/api/packages?place=${id}`
+          `https://tripplanner-1.onrender.com/api/packages?place=${id}`
         );
+        if (response.status === 404) {
+          setError(`No packages found for ${id}.`);
+          setPackages([]); // Reset packages in case of 404
+          return;
+        }
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
         setPackages(data);
       } catch (error) {
-        setError(error.message);
+        setError(`Error fetching packages: ${error.message}`);
       } finally {
         setLoading(false);
       }
@@ -42,9 +38,8 @@ const Package = () => {
   }, [id]);
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error fetching packages: {error}</div>;
-  if (!packages || packages.length === 0)
-    return <div>No packages found for {id}.</div>;
+  if (error) return <div>{error}</div>;
+  if (packages.length === 0) return <div>No packages found for {id}.</div>;
 
   return (
     <div className="container mx-auto p-4">
@@ -62,30 +57,17 @@ const Package = () => {
         {packages.map((packageData, index) => {
           const { title, price, duration, imageUrl, features } = packageData;
           return (
-            <div
-              key={index}
-              className="w-full sm:w-1/2 lg:w-1/3 p-2"
-            >
+            <div key={index} className="w-full sm:w-1/2 lg:w-1/3 p-2">
               <div className="border rounded-lg p-4 bg-white shadow-md">
                 <h2 className="text-xl font-semibold">{title}</h2>
-                <h3 className="text-lg">₹{price} per person ({duration})</h3>
                 <img
                   src={imageUrl}
                   alt={title}
                   className="w-full h-48 object-cover rounded-lg my-2"
                 />
-                <div className="my-2">
-                  <h4 className="font-semibold">Features:</h4>
-                  <ul className="list-disc list-inside">
-                    {features && features.length > 0 ? (
-                      features.map((feature, index) => (
-                        <li key={index}>{feature}</li>
-                      ))
-                    ) : (
-                      <li>No features available.</li>
-                    )}
-                  </ul>
-                </div>
+                <h3 className="text-lg">
+                  ₹{price} per person ({duration})
+                </h3>
                 <Link
                   to="/form"
                   state={{
@@ -95,9 +77,9 @@ const Package = () => {
                     features,
                     imageUrl,
                   }}
-                  className="bg-blue-600 text-white py-2 px-4 rounded mt-4 inline-block"
+                  className="bg-gradient-to-r from-blue-600 to-purple-700 text-white font-semibold py-2 px-6 rounded-lg mt-4 inline-block shadow-lg transform transition-transform duration-200 hover:from-purple-700 hover:to-blue-600 hover:-translate-y-1"
                 >
-                  Book this package
+                  About this package
                 </Link>
               </div>
             </div>
@@ -106,7 +88,7 @@ const Package = () => {
       </div>
 
       <div className="my-8">
-        <h2 className="text-2xl font-bold mb-2">Explore {id}</h2>
+        <h2 className="text-2xl text-center font-bold mb-3">Explore {id}</h2>
         <iframe
           width="100%"
           height="600"

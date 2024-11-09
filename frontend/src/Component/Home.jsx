@@ -10,8 +10,8 @@ export default function Home() {
             It's,a Big World Out There,Go Explore🚀
           </h1>
           <p className="max-w-xl">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex, quod
-            error perspiciatis sit cupiditate impedit.
+            Discover unforgettable journeys tailored to you—plan, explore, and
+            experience the world with ease and inspiration at every step.
           </p>
         </div>
         <div>
@@ -24,7 +24,7 @@ export default function Home() {
       </section>
       <section className="px-4 py-8 ml-10">
         <h1 className="font-bold text-3xl text-center mb-10">
-          Unlock Lesser-Known Places of TamilNadu
+          Popuplar Places
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           <div className="max-w-sm rounded-lg overflow-hidden bg-slate-50 drop-shadow p-5 flex flex-col h-full">

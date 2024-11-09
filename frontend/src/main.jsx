@@ -18,6 +18,8 @@ import About from "./Component/about";
 import Contact from "./Component/contact";
 import PaymentDetails from "./Component/paymentdetails";
 import PackageDetails from "./Component/packagedetails";
+import EditPackage from "./Component/editpack";
+import AddPackage from "./Component/addpack";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -54,6 +56,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/payment-details" element={<PaymentDetails />} />
         <Route path="/packagedetails" element={<PackageDetails />} />
         <Route path="/update" element={<Update />} />
+
+        {/* Add and Edit Package Routes */}
+        <Route path="/add-package" element={<AddPackage />} />
+        <Route path="/edit-package/:id" element={<EditPackage />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

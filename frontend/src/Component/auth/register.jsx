@@ -1,6 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import AuthSidebar from "../authsidebar";
+import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -62,47 +66,56 @@ const Register = () => {
         "https://tripplanner-1.onrender.com/api/auth/register",
         formData
       );
-      alert(res.data.message);
-      navigate("/login");
+      toast.success(res.data.message);  // Display success toast
+      setTimeout(() => navigate("/login"), 2000);  // Redirect after 2 seconds
     } catch (err) {
       console.error(err.response?.data?.message);
-      alert(err.response?.data?.message || "Error during registration");
+      toast.error(err.response?.data?.message || "Error during registration");  // Display error toast
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md w-96"
-      >
-        <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
-
-        {Object.keys(formData).map((key) => (
-          <div key={key} className="mb-4">
-            <input
-              type={key === "password" ? "password" : "text"}
-              name={key}
-              placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-              onChange={handleChange}
-              required
-              className={`w-full p-2 border ${
-                errors[key] ? "border-red-500" : "border-gray-300"
-              } rounded focus:outline-none focus:ring focus:ring-blue-400`}
-            />
-            {errors[key] && (
-              <p className="text-red-500 text-sm">{errors[key]}</p>
-            )}
-          </div>
-        ))}
-
-        <button
-          type="submit"
-          className="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200"
+    <div className="flex">
+      <AuthSidebar />
+      <div className="flex justify-center items-center h-screen bg-white ml-56">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white p-8 rounded-lg w-[450px]"
         >
-          Register
-        </button>
-      </form>
+          <h2 className="text-3xl font-bold text-center mb-3">
+            Create new account
+          </h2>
+          <p className="ml-[100px] text-sm">
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+
+          {Object.keys(formData).map((key) => (
+            <div key={key} className="mb-4 mt-2">
+              <input
+                type={key === "password" ? "password" : "text"}
+                name={key}
+                placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+                onChange={handleChange}
+                required
+                className={`w-full p-2 border ${
+                  errors[key] ? "border-red-500" : "border-gray-300"
+                } rounded focus:outline-none focus:ring focus:ring-blue-400`}
+              />
+              {errors[key] && (
+                <p className="text-red-500 text-sm">{errors[key]}</p>
+              )}
+            </div>
+          ))}
+
+          <button
+            type="submit"
+            className="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200"
+          >
+            Register
+          </button>
+        </form>
+      </div>
+      <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );
 };

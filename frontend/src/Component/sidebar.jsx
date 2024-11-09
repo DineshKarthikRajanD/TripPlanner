@@ -23,6 +23,12 @@ function Sidebar() {
       >
         Payment Details
       </Link>
+      <Link
+        to="/add-package"
+        className="text-lg font-medium hover:bg-blue-700 p-2 rounded"
+      >
+        Add Package
+      </Link>
     </aside>
   );
 }

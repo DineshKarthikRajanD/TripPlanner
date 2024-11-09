@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import "./review.css";
 
 const ReviewList = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const carouselRef = useRef(null);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -32,7 +34,15 @@ const ReviewList = () => {
   }, []);
 
   const staticProfilePic =
-    "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"; // Static profile picture
+    "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg";
+
+  // Function to handle scroll
+  const scrollCarousel = (direction) => {
+    if (carouselRef.current) {
+      const scrollAmount = direction === "left" ? -300 : 300;
+      carouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
+  };
 
   if (loading) {
     return <p>Loading reviews...</p>;
@@ -43,37 +53,60 @@ const ReviewList = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg">
       <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">
         Reviews
       </h2>
+
       {reviews.length === 0 ? (
         <p className="text-center">No reviews yet.</p>
       ) : (
-        <div className="flex flex-wrap justify-center gap-4">
-          {reviews.map((review) => (
-            <div
-              key={review._id}
-              className="flex items-start p-4 border border-gray-300 rounded-lg shadow-md w-full sm:w-1/2 md:w-1/3 lg:w-1/4 bg-gray-50"
-            >
-              <img
-                src={staticProfilePic}
-                alt="Profile"
-                className="w-12 h-12 rounded-full mr-4"
-              />
-              <div className="flex-1">
-                <div className="flex justify-between">
-                  <span className="text-lg font-semibold">
-                    {review.userId}
-                  </span>
-                  <span className="text-yellow-500">
-                    {"★".repeat(review.rating)}
-                  </span>
+        <div className="relative">
+          {/* Left arrow button */}
+          <button
+            onClick={() => scrollCarousel("left")}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white text-black p-2 rounded-full hover:bg-gray-50 focus:outline-none"
+          >
+            &lt;
+          </button>
+
+          {/* Reviews container */}
+          <div
+            ref={carouselRef}
+            className="flex overflow-x-scroll no-scrollbar space-x-4 p-4"
+          >
+            {reviews.map((review) => (
+              <div
+                key={review._id}
+                className="flex-shrink-0 flex items-start p-4 border border-gray-300 rounded-lg shadow-md w-64 bg-gray-50"
+              >
+                <img
+                  src={staticProfilePic}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div className="flex-1">
+                  <div className="flex justify-between">
+                    <span className="text-lg font-semibold">
+                      {review.userId}
+                    </span>
+                    <span className="text-yellow-500">
+                      {"★".repeat(review.rating)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-gray-700">{review.comment}</p>
                 </div>
-                <p className="mt-2 text-gray-700">{review.comment}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Right arrow button */}
+          <button
+            onClick={() => scrollCarousel("right")}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white text-black p-2 rounded-full hover:bg-gray-50 focus:outline-none"
+          >
+            &gt;
+          </button>
         </div>
       )}
     </div>

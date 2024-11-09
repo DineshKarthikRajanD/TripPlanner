@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import dbconnect from "./database/db.js"; 
+import dbconnect from "./database/db.js";
 import {
   registerUser,
   loginUser,
@@ -14,7 +14,7 @@ import {
   updatePlace,
   deletePlace,
   searchPlaces,
-  addPackage,
+  handleAddPackage,
   getPackagesByPlace,
   addReview,
   bookedcont,
@@ -23,7 +23,10 @@ import {
   paymentDetails,
   packageDetails,
   loginEmail,
-} from './controller/control.js';
+  deletePackages,
+  getPackage,
+  deletePayment,
+} from "./controller/control.js";
 
 const app = express();
 const port = process.env.PORT || 5000; // Use environment variable for port
@@ -32,15 +35,13 @@ const port = process.env.PORT || 5000; // Use environment variable for port
 dbconnect();
 
 // Middleware setup
-app.use(cors({
-  origin: [
-    "https://travellplanner.netlify.app", 
-    "http://localhost:5173"                 
-  ],
-  methods: ["GET", "POST", "DELETE", "PUT"],
-  credentials: true,
-}));
-
+app.use(
+  cors({
+    origin: ["https://travellplanner.netlify.app", "http://localhost:5173"],
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true,
+  })
+);
 
 app.use(express.json()); // For parsing application/json
 app.use(bodyParser.json()); // For parsing application/json (optional if using express.json)
@@ -48,27 +49,30 @@ app.use(bodyParser.json()); // For parsing application/json (optional if using e
 // API routes
 app.post("/api/auth/register", registerUser);
 app.post("/api/auth/login", loginUser);
-app.post("/customer", coustmer_details); 
+app.post("/customer", coustmer_details);
 app.get("/userdata", userData);
-app.get("/api/user",loginEmail);          
-app.delete("/userDelete/:email", userDelete); 
-app.put("/userUpdate/:email", updateData);    
+app.get("/api/user", loginEmail);
+app.delete("/userDelete/:email", userDelete);
+app.put("/userUpdate/:email", updateData);
 
-app.post("/api/places", addPlace); 
-app.get("/api/places", getAllPlaces); 
-app.put("/api/places/:id", updatePlace); 
+app.post("/api/places", addPlace);
+app.get("/api/places", getAllPlaces);
+app.put("/api/places/:id", updatePlace);
 app.delete("/api/places/:id", deletePlace);
-app.get("/api/places/search", searchPlaces); 
+app.get("/api/places/search", searchPlaces);
 
-app.post('/api/packages', addPackage);
+app.post("/api/packages", handleAddPackage);
 app.get("/api/packages", getPackagesByPlace);
+app.delete("/api/packages/:id", deletePackages);
 app.post("/api/reviews", addReview);
 app.get("/api/booked/:name", bookedcont);
-app.get('/api/reviews', dispReview);
-app.put('/api/packages/:id', updatePackage);
+app.get("/api/reviews", dispReview);
+app.put("/api/packages/:id", updatePackage);
 app.post("/payment", coustmer_details);
-app.get("/payment",paymentDetails);
-app.get("/packages",packageDetails);
+app.get("/payment", paymentDetails);
+app.get("/packages", packageDetails);
+app.get("/api/packages/:id", getPackage);
+app.delete("/payments/:id", deletePayment);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

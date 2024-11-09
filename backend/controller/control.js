@@ -1,15 +1,15 @@
 import user from "../model/coustmermodel.js";
 import User from "../model/loginmodel.js";
-import Place from "../model/placeModel.js"; 
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import Place from "../model/placeModel.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import Package from "../model/packagesModel.js";
 import Review from "../model/reviewmodel.js";
 import mongoose from "mongoose";
-import PayModel from '../model/payModel.js';
-import { validatePay } from '../schema/paymentSchema.js';
-import UserModel from '../model/userModel.js';
-import { validateUser } from '../schema/userSchema.js';
+import PayModel from "../model/payModel.js";
+import { validatePay } from "../schema/paymentSchema.js";
+import UserModel from "../model/userModel.js";
+import { validateUser } from "../schema/userSchema.js";
 import { validateCustomer } from "../schema/customerSchema.js";
 
 const registerUser = async (req, res) => {
@@ -43,21 +43,22 @@ const registerUser = async (req, res) => {
     await newUser.save();
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    console.error('Error registering user:', error);
+    console.error("Error registering user:", error);
     res.status(500).json({ message: "Server Error: " + error.message });
   }
 };
 
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Get token from the header
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Get token from the header
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized: Token is missing." });
   }
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Unauthorized: Invalid token." });
+    if (err)
+      return res.status(403).json({ message: "Unauthorized: Invalid token." });
 
     req.user = user; // Save user information from token to request
     next(); // Call next middleware or route handler
@@ -69,7 +70,9 @@ const loginUser = async (req, res) => {
 
     // Check for required fields
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
     // Find the user by email
@@ -86,10 +89,12 @@ const loginUser = async (req, res) => {
     const name = user.name;
 
     // Generate a token
-    const token = jwt.sign({ userId: user._id }, "your_jwt_secret", { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id }, "your_jwt_secret", {
+      expiresIn: "1h",
+    });
     res.json({ message: "Login successful", token, name });
   } catch (error) {
-    console.error('Error logging in user:', error);
+    console.error("Error logging in user:", error);
     res.status(500).json({ message: "Server Error: " + error.message });
   }
 };
@@ -98,22 +103,22 @@ const loginEmail = async (req, res) => {
   try {
     // Check if req.user exists and has the id property
     if (!req.user || !req.user._id) {
-      return res.status(401).json({ message: 'Unauthorized: User ID is missing.' });
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User ID is missing." });
     }
 
-    const user = await User.findById(req.user._id).select('email'); // Only select the email field
+    const user = await User.findById(req.user._id).select("email"); // Only select the email field
     if (!user) {
-      return res.status(404).json({ message: 'User not found.' }); // Not found
+      return res.status(404).json({ message: "User not found." }); // Not found
     }
 
     res.status(200).json({ email: user.email }); // Success
   } catch (error) {
-    console.error('Error fetching user email:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error fetching user email:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-
 
 const coustmer_details = async (req, res) => {
   try {
@@ -175,7 +180,11 @@ const updateData = async (req, res) => {
   const email = req.params.email;
   const { name, mobile } = req.body;
   try {
-    const result = await UserModel.findOneAndUpdate({ email }, { name, mobile }, { new: true });
+    const result = await UserModel.findOneAndUpdate(
+      { email },
+      { name, mobile },
+      { new: true }
+    );
     if (result) {
       res.status(200).send("Updated Successfully");
     } else {
@@ -256,9 +265,9 @@ const deletePlace = async (req, res) => {
 };
 
 const searchPlaces = async (req, res) => {
-  const { query } = req.query; 
+  const { query } = req.query;
   try {
-    const results = await Place.find({ name: new RegExp(query, 'i') });
+    const results = await Place.find({ name: new RegExp(query, "i") });
     res.json(results);
   } catch (error) {
     console.error("Error searching places:", error);
@@ -266,45 +275,125 @@ const searchPlaces = async (req, res) => {
   }
 };
 
-const addPackage = async (req, res) => {
-  const packages = req.body;
-  if (!Array.isArray(packages) || packages.length === 0) {
-    return res.status(400).json({ error: "Request body must be a non-empty array of packages" });
-  }
-  for (const pkg of packages) {
-    const { title, price, duration, features, place, location, imageUrl } = pkg;
-
-    if (!title || !price || !duration || !features || !place || !location || !location.latitude || !location.longitude || !imageUrl) {
-      return res.status(400).json({ error: "All fields are required for each package" });
-    }
-  }
-
+const handleAddPackage = async (req, res) => {
   try {
-    const newPackages = await Package.insertMany(packages);
-    res.status(201).json({ message: "Packages added successfully", newPackages });
+    const { title, price, duration, features, place, location, imageUrl } =
+      req.body;
+
+    // Validate required fields
+    if (
+      !title ||
+      !price ||
+      !duration ||
+      !features ||
+      !place ||
+      !location ||
+      !imageUrl
+    ) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Validate that features is an array and not empty
+    if (!Array.isArray(features) || features.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "Features must be a non-empty array" });
+    }
+
+    // Validate location
+    const { latitude, longitude } = location;
+    if (latitude === undefined || longitude === undefined) {
+      return res
+        .status(400)
+        .json({ error: "Latitude and Longitude are required in location" });
+    }
+
+    // Create a new package
+    const newPackage = new Package({
+      title,
+      price,
+      duration,
+      features,
+      place,
+      location: { latitude, longitude },
+      imageUrl,
+    });
+
+    // Save the package to the database
+    await newPackage.save();
+
+    // Send a success response
+    res
+      .status(201)
+      .json({ message: "Package added successfully", package: newPackage });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error: " + error.message });
+    console.error("Error in handleAddPackage:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
+const deletePackages = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedPackage = await Package.findByIdAndDelete(id);
+
+    if (!deletedPackage) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+
+    res.status(200).json({ message: "Package deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error deleting package", error });
+  }
+};
 
 const getPackagesByPlace = async (req, res) => {
-  const { place } = req.query; // Use req.query to extract the place from query parameters
+  const { place } = req.query;
   try {
-    // Find all packages matching the place
-    const packages = await Package.find({ place: { $regex: new RegExp(`^${place}$`, 'i') } });
+    // Case-insensitive match with flexible spacing
+    const packages = await Package.find({
+      place: { $regex: new RegExp(`^${place.trim()}$`, "i") },
+    });
 
     if (packages.length === 0) {
-      return res.status(404).json({ message: "No packages found for this place." });
+      return res
+        .status(404)
+        .json({ message: `No packages found for ${place}.` });
     }
 
-    // Return all found packages
-    res.json(packages); // Return the array of packages found for the place
+    res.json(packages);
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error: " + error.message });
+    console.error("Error fetching packages:", error.message);
+    res.status(500).json({ error: `Internal Server Error: ${error.message}` });
   }
 };
 
+const getPackage = async (req, res) => {
+  const { id } = req.params; // Get package ID from the request URL
+
+  try {
+    // Check if the provided ID is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid package ID" });
+    }
+
+    // Fetch the package by its ID from the database
+    const pack = await Package.findById(id);
+
+    // If the package is not found, return a 404 error
+    if (!pack) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+
+    // Return the package data
+    res.status(200).json(pack);
+  } catch (error) {
+    // Handle any server errors
+    console.error(error);
+    res.status(500).json({ message: "Error fetching package", error });
+  }
+};
 
 const addReview = async (req, res) => {
   const { userId, placeId, rating, comment } = req.body;
@@ -312,7 +401,7 @@ const addReview = async (req, res) => {
   if (!userId || !placeId || typeof rating !== "number" || !comment) {
     return res.status(400).json({ message: "All fields are required." });
   }
-  
+
   if (rating < 1 || rating > 5) {
     return res.status(400).json({ message: "Rating must be between 1 and 5." });
   }
@@ -329,26 +418,29 @@ const addReview = async (req, res) => {
     await newReview.save();
     res.status(201).json(newReview);
   } catch (error) {
-    console.error("Error adding review:", error); 
-    res.status(500).json({ message: "Failed to add review. Please try again." });
+    console.error("Error adding review:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to add review. Please try again." });
   }
-}
+};
 
 const dispReview = async (req, res) => {
   try {
-    const reviews = await Review.find().populate('userId'); 
+    const reviews = await Review.find().populate("userId");
     res.status(200).json({ success: true, reviews });
   } catch (error) {
-    console.error("Error retrieving reviews:", error); 
-    res.status(500).json({ message: "Failed to retrieve reviews. Please try again." });
+    console.error("Error retrieving reviews:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve reviews. Please try again." });
   }
-}
-
+};
 
 const bookedcont = async (req, res) => {
   try {
     console.log(req.params.name);
-    
+
     const customerData = await PayModel.find({ name: req.params.name });
     const packageData = await Package.find();
 
@@ -357,10 +449,14 @@ const bookedcont = async (req, res) => {
       return map;
     }, {});
 
-    const bookedPackages = customerData.map(customer => {
-      const matchedPackage = packageMap[customer.packageTitle];
-      return matchedPackage ? { customer, packageDetails: matchedPackage } : null;
-    }).filter(pkg => pkg !== null); 
+    const bookedPackages = customerData
+      .map((customer) => {
+        const matchedPackage = packageMap[customer.packageTitle];
+        return matchedPackage
+          ? { customer, packageDetails: matchedPackage }
+          : null;
+      })
+      .filter((pkg) => pkg !== null);
 
     res.json(bookedPackages);
   } catch (error) {
@@ -370,30 +466,26 @@ const bookedcont = async (req, res) => {
 };
 
 const updatePackage = async (req, res) => {
-  const { id } = req.params; // This should be the _id of the package
-  const updateData = req.body; // This contains the data to update
+  const packageId = req.params.id; // Get the package ID from URL params
+  const updatedData = req.body; // Get the data to update from the request body
 
-  // Validate the ObjectId format
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "Invalid ID format" });
-  }
+  console.log("Updating package with ID:", packageId); // Log the package ID for debugging
 
   try {
-    const packageId = new mongoose.Types.ObjectId(id);
-
-    const updatedPackage = await Package.findByIdAndUpdate(packageId, updateData, {
-      new: true,
-      runValidators: true,
-    });
+    // Find the package by ID and update it
+    const updatedPackage = await Package.findByIdAndUpdate(
+      packageId,
+      updatedData,
+      { new: true } // Return the updated package
+    );
 
     if (!updatedPackage) {
-      return res.status(404).json({ message: "Package not found" });
+      return res.status(404).json({ message: "Package not found" }); // Handle case when package is not found
     }
 
-    res.json(updatedPackage);
+    res.status(200).json(updatedPackage); // Send the updated package back as a response
   } catch (error) {
-    console.error(error); 
-    res.status(500).json({ error: "Internal Server Error: " + error.message });
+    res.status(500).json({ message: "Server error", error }); // Handle server errors
   }
 };
 
@@ -402,89 +494,106 @@ const savePayment = async (req, res) => {
   if (error) return res.status(400).json({ message: error.details[0].message });
 
   try {
-      const paymentDetails = req.body;
-      const savedPayment = await PayModel.create(paymentDetails);
-      res.status(201).json(savedPayment);
+    const paymentDetails = req.body;
+    const savedPayment = await PayModel.create(paymentDetails);
+    res.status(201).json(savedPayment);
   } catch (error) {
     console.error("Error occurred:", err.message);
-      console.error('Error saving payment details:', error);
-      res.status(500).json({ message: "Failed to save payment details." });
+    console.error("Error saving payment details:", error);
+    res.status(500).json({ message: "Failed to save payment details." });
   }
 };
 
-
 const saveCustomer = async (req, res) => {
-    const { error } = validateCustomer(req.body);
-    if (error) return res.status(400).json({ message: error.details[0].message });
+  const { error } = validateCustomer(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
-    try {
-        const customerDetails = req.body;
-        const savedCustomer = await coustmer_details.create(customerDetails);
-        res.status(201).json(savedCustomer);
-    } catch (error) {
-        console.error('Error saving customer details:', error);
-        res.status(500).json({ message: "Failed to save customer details." });
-    }
+  try {
+    const customerDetails = req.body;
+    const savedCustomer = await coustmer_details.create(customerDetails);
+    res.status(201).json(savedCustomer);
+  } catch (error) {
+    console.error("Error saving customer details:", error);
+    res.status(500).json({ message: "Failed to save customer details." });
+  }
 };
 
 const createUser = async (req, res) => {
   try {
-      const { error } = validateUser(req.body); // Validate input data
-      if (error) {
-          console.error("Validation error:", error.details[0].message); // Log the validation error
-          return res.status(400).send(error.details[0].message);
-      }
+    const { error } = validateUser(req.body); // Validate input data
+    if (error) {
+      console.error("Validation error:", error.details[0].message); // Log the validation error
+      return res.status(400).send(error.details[0].message);
+    }
 
-      // Create a new user instance from the validated data
-      const user = new UserModel({
-          username: req.body.username,
-          password: req.body.password, // Consider hashing the password here
-      });
+    // Create a new user instance from the validated data
+    const user = new UserModel({
+      username: req.body.username,
+      password: req.body.password, // Consider hashing the password here
+    });
 
-      await user.save();
-      // Respond with the created user, excluding sensitive information
-      res.status(201).send({
-          id: user._id,
-          username: user.username,
-          createdAt: user.createdAt,
-      });
+    await user.save();
+    // Respond with the created user, excluding sensitive information
+    res.status(201).send({
+      id: user._id,
+      username: user.username,
+      createdAt: user.createdAt,
+    });
   } catch (err) {
-      console.error("Error saving user details:", err); // Log the error
-      res.status(500).send("Error saving user details");
+    console.error("Error saving user details:", err); // Log the error
+    res.status(500).send("Error saving user details");
   }
 };
 
-const paymentDetails = async(req,res) => {
-  try{
-    const payments = await PayModel.find(); 
+const paymentDetails = async (req, res) => {
+  try {
+    const payments = await PayModel.find();
     res.status(200).json(payments);
   } catch (error) {
     res.status(500).json({ message: "Error fetching payment data", error });
   }
-}
+};
 
-const packageDetails = async(req,res) => {
+const deletePayment = async (req, res) => {
+  const { id } = req.params; // Assume payment ID is passed as a URL parameter
+
+  try {
+    const deletedPayment = await PayModel.findByIdAndDelete(id);
+
+    if (!deletedPayment) {
+      return res.status(404).json({ message: "Payment not found" });
+    }
+
+    res.status(200).json({ message: "Payment deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting payment", error });
+  }
+};
+
+const packageDetails = async (req, res) => {
   try {
     const packages = await Package.find();
     res.json(packages);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching packages', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching packages", error: error.message });
   }
-}
+};
 
-export { 
-  registerUser, 
-  loginUser, 
-  coustmer_details, 
-  userData, 
-  userDelete, 
-  updateData, 
-  addPlace, 
-  getAllPlaces, 
-  updatePlace, 
+export {
+  registerUser,
+  loginUser,
+  coustmer_details,
+  userData,
+  userDelete,
+  updateData,
+  addPlace,
+  getAllPlaces,
+  updatePlace,
   deletePlace,
   searchPlaces,
-  addPackage,
+  handleAddPackage,
   getPackagesByPlace,
   addReview,
   bookedcont,
@@ -496,4 +605,7 @@ export {
   paymentDetails,
   packageDetails,
   loginEmail,
+  deletePackages,
+  getPackage,
+  deletePayment,
 };

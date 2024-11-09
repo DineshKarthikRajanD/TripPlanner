@@ -13,7 +13,6 @@ const packageSchema = new mongoose.Schema({
   imageUrl: { type: String, required: true },
 });
 
-
 const Package = mongoose.model("Package", packageSchema);
 
-export default Package; 
+export default Package;
