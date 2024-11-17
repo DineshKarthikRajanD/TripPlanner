@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function AddPackage() {
   const [newPackage, setNewPackage] = useState({
@@ -11,6 +12,8 @@ function AddPackage() {
     location: { latitude: "", longitude: "" },
     imageUrl: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,11 +61,12 @@ function AddPackage() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5173/api/packages",
+        "https://tripplanner-1.onrender.com/api/packages",
         packageData,
         { headers: { "Content-Type": "application/json" } }
       );
       console.log("Package Added:", response.data);
+      navigate("/packagedetails");
     } catch (error) {
       console.error("Error adding package:", error);
     }

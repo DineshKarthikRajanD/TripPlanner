@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
 import axios from "axios";
-import Sidebar from "./Sidebar";
+import Sidebar from "./sidebar";
 
 function PackageDetails() {
   const [packages, setPackages] = useState([]);
@@ -29,7 +29,7 @@ function PackageDetails() {
   const handleDeletePackage = async (id) => {
     try {
       // Send DELETE request to the backend
-      await axios.delete(`http://localhost:5000/api/packages/${id}`);
+      await axios.delete(`https://tripplanner-1.onrender.com/api/packages/${id}`);
 
       // Remove the deleted package from the state (optimistic update)
       setPackages((prevPackages) =>

@@ -11,6 +11,8 @@ import { validatePay } from "../schema/paymentSchema.js";
 import UserModel from "../model/userModel.js";
 import { validateUser } from "../schema/userSchema.js";
 import { validateCustomer } from "../schema/customerSchema.js";
+import nodemailer from "nodemailer";
+import ProfileModel from "../model/profileModel.js";
 
 const registerUser = async (req, res) => {
   try {
@@ -86,13 +88,18 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+    const useremail = user.email;
     const name = user.name;
-
     // Generate a token
     const token = jwt.sign({ userId: user._id }, "your_jwt_secret", {
       expiresIn: "1h",
     });
-    res.json({ message: "Login successful", token, name });
+    res.json({
+      message: `Login successful ${useremail}`,
+      token,
+      useremail,
+      name,
+    });
   } catch (error) {
     console.error("Error logging in user:", error);
     res.status(500).json({ message: "Server Error: " + error.message });
@@ -123,10 +130,19 @@ const loginEmail = async (req, res) => {
 const coustmer_details = async (req, res) => {
   try {
     // Destructure and validate input data
-    const { name, mobile, email, packageTitle, paymentId, amount } = req.body;
+    const { name, mobile, email, packageTitle, paymentId, amount, date } =
+      req.body;
 
     // Basic input validation (you can use Joi for comprehensive validation)
-    if (!name || !mobile || !email || !packageTitle || !paymentId || !amount) {
+    if (
+      !name ||
+      !mobile ||
+      !email ||
+      !packageTitle ||
+      !paymentId ||
+      !amount ||
+      !date
+    ) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
@@ -138,11 +154,13 @@ const coustmer_details = async (req, res) => {
       packageTitle,
       paymentId,
       amount,
+      date,
     });
 
     // Save to the database
     await newPayment.save();
 
+    await checkAndSendReminders(email, packageTitle, date);
     // Respond with success
     res.status(201).json({ message: "Payment details saved successfully!" });
   } catch (error) {
@@ -581,6 +599,122 @@ const packageDetails = async (req, res) => {
   }
 };
 
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: "dineshkarthikrajand.22cse@kongu.edu",
+    pass: "katsmmnarzpotuax",
+  },
+});
+
+function sendMail(to, msg) {
+  transporter.sendMail(
+    {
+      from: "dineshkarthikrajand.22cse@kongu.edu",
+      to: to,
+      subject: "Reminder: Please Review Your Package Experience",
+      html: `
+        <html>
+          <body style="font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+              <h2 style="color: #333333;">Hello!</h2>
+              <p style="color: #555555; font-size: 16px;">We hope you enjoyed your <strong>"${msg}"</strong> package. We would love to hear your feedback!</p>
+              <p style="color: #555555; font-size: 16px;">Please take a moment to provide your feedback by clicking the button below:</p>
+              <a href="travellplanner.netlify.app" 
+                 style="display: inline-block; padding: 12px 25px; margin-top: 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 18px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 128, 0, 0.3);">
+                Give Review
+              </a>
+              <p style="color: #777777; font-size: 14px; margin-top: 20px;">Thank you for your time!</p>
+            </div>
+          </body>
+        </html>
+      `,
+    },
+    (error, info) => {
+      if (error) {
+        return console.error("Error sending email:", error);
+      }
+      console.log("Email sent:", info.response);
+    }
+  );
+}
+
+const checkAndSendReminders = async (email, packageTitle, tripStartDate) => {
+  try {
+    const packageData = await Package.findOne({ title: packageTitle });
+    if (!packageData) return;
+
+    const durationDays = parseInt(packageData.duration);
+
+    const tripStart = new Date(tripStartDate);
+    const currentDate = new Date();
+
+    const tripEndDate = new Date(tripStart);
+    tripEndDate.setDate(tripEndDate.getDate() + durationDays);
+
+    if (currentDate > tripEndDate) {
+      await sendMail(email, packageTitle);
+    }
+  } catch (error) {
+    console.error("Error checking and sending reminders:", error);
+  }
+};
+
+const handleUpload = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const imgUrl = `/uploads/${req.file.filename}`;
+    console.log(email);
+    const profile = await ProfileModel.findOneAndUpdate(
+      { email },
+      { imgUrl },
+      { new: true, upsert: true }
+    );
+
+    res.status(200).json({ message: "Profile updated", profile });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    res.status(500).json({ error: "Image upload failed" });
+  }
+};
+
+const getProfile = async (req, res) => {
+  try {
+    console.log("Incoming request to fetch profile");
+
+    const email = req.query.email;
+
+    // Log and handle missing email
+    if (!email) {
+      console.error("Email query parameter is missing");
+      return res
+        .status(400)
+        .json({ message: "Email query parameter is missing" });
+    }
+
+    console.log("Query email:", email);
+
+    const user = await ProfileModel.findOne({ email });
+
+    if (!user) {
+      console.error("No user found with the provided email:", email);
+      return res
+        .status(404)
+        .json({ message: "User not found with the given email" });
+    }
+
+    console.log("User found:", user);
+
+    const { email: userEmail, imgUrl } = user;
+    res.status(200).json({ email: userEmail, image: imgUrl });
+  } catch (error) {
+    console.error("Error fetching profile data:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export {
   registerUser,
   loginUser,
@@ -608,4 +742,6 @@ export {
   deletePackages,
   getPackage,
   deletePayment,
+  handleUpload,
+  getProfile,
 };

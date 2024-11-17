@@ -11,6 +11,7 @@ email: {
     required: true,
     unique: true,
 },
+
 // Add other fields as needed...
 }, { timestamps: true });
 

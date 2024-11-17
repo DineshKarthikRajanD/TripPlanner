@@ -27,7 +27,7 @@ function PaymentDetails() {
 
   const deletePayment = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/payments/${id}`);
+      await axios.delete(`https://tripplanner-1.onrender.com/payments/${id}`);
       setPayments((prevPayments) =>
         prevPayments.filter((payment) => payment._id !== id)
       );

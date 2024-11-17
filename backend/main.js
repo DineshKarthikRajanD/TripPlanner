@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dbconnect from "./database/db.js";
+import multer from "multer";
 import {
   registerUser,
   loginUser,
@@ -26,15 +27,15 @@ import {
   deletePackages,
   getPackage,
   deletePayment,
+  handleUpload,
+  getProfile,
 } from "./controller/control.js";
 
 const app = express();
-const port = process.env.PORT || 5000; // Use environment variable for port
+const port = process.env.PORT || 5000; 
 
-// Database connection
 dbconnect();
 
-// Middleware setup
 app.use(
   cors({
     origin: ["https://travellplanner.netlify.app", "http://localhost:5173"],
@@ -43,10 +44,9 @@ app.use(
   })
 );
 
-app.use(express.json()); // For parsing application/json
-app.use(bodyParser.json()); // For parsing application/json (optional if using express.json)
+app.use(express.json());
+app.use(bodyParser.json());
 
-// API routes
 app.post("/api/auth/register", registerUser);
 app.post("/api/auth/login", loginUser);
 app.post("/customer", coustmer_details);
@@ -73,6 +73,21 @@ app.get("/payment", paymentDetails);
 app.get("/packages", packageDetails);
 app.get("/api/packages/:id", getPackage);
 app.delete("/payments/:id", deletePayment);
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}_${file.originalname}`);
+  },
+});
+const upload = multer({ storage });
+
+
+app.post("/upload", upload.single("profilePhoto"), handleUpload);
+app.use("/uploads", express.static("uploads"));
+app.get("/get/upload", getProfile);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

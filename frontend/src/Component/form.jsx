@@ -14,6 +14,7 @@ function Form() {
   const [imageUrl, setImageUrl] = useState("");
   const [amount, setAmount] = useState(0);
   const [count, setCount] = useState(1);
+  const [date, setDate] = useState(""); // New state for date
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function Form() {
     if (title) setPackageTitle(title);
     if (price) {
       setPrice(price);
-      setAmount(price); // Set amount based on package price
+      setAmount(price);
     }
     if (duration) setDuration(duration);
     if (features) setFeatures(features);
@@ -31,23 +32,23 @@ function Form() {
   }, [location]);
 
   useEffect(() => {
-    setAmount(price * count); // Update amount based on count
+    setAmount(price * count);
   }, [count, price]);
+
+  const today = new Date().toISOString().split("T")[0];
 
   const storePaymentDetails = async (paymentId) => {
     const name = localStorage.getItem("name");
     try {
-      const response = await axios.post(
-        "https://tripplanner-2ccq.onrender.com/payment",
-        {
-          name,
-          mobile,
-          email,
-          packageTitle,
-          paymentId,
-          amount,
-        }
-      );
+      const response = await axios.post("http://localhost:5000/payment", {
+        name,
+        mobile,
+        email,
+        packageTitle,
+        paymentId,
+        amount,
+        date, // Include date in payment details
+      });
       console.log("Payment details stored:", response.data);
       toast.success("Payment details stored successfully!");
     } catch (error) {
@@ -67,13 +68,14 @@ function Form() {
       packageTitle,
       count,
       amount,
+      date, // Include date in customer data
     };
 
     console.log("Sending customer data:", customerData);
 
     try {
       const response = await axios.post(
-        "https://tripplanner-2ccq.onrender.com/customer",
+        "http://localhost:5000/customer",
         customerData
       );
       toast.success(`Thanks for Booking ${customerData.name}`);
@@ -83,19 +85,16 @@ function Form() {
       setEmail("");
       setCount(1);
       setAmount(price);
+      setDate(""); // Clear date after submission
 
-      navigate("/booked-packages"); // Redirect to booked packages page
+      navigate("/booked-packages");
     } catch (error) {
       console.error("Error occurred:", error.response || error);
-      toast.error(
-        "An error occurred while submitting the form: " +
-          (error.response?.data?.message || error.message)
-      );
     }
   };
 
   const handlePayment = (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     if (!amount || isNaN(amount) || amount <= 0) {
       alert("Please enter a valid amount");
       return;
@@ -110,7 +109,7 @@ function Form() {
       handler: async function (response) {
         alert(`Payment successful: ${response.razorpay_payment_id}`);
         await storePaymentDetails(response.razorpay_payment_id); // Store payment details
-        await handleSubmit(); // Call submit function after successful payment
+        await handleSubmit();
       },
       prefill: {
         name: localStorage.getItem("name"),
@@ -132,7 +131,7 @@ function Form() {
   return (
     <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 py-8">
       {/* Package Details Section */}
-      <div className="bg-white rounded-lg shadow-xl p-6 flex-1 mr-20 hover:shadow-2xl transition duration-300 text-center">
+      <div className="bg-white rounded-lg w-full p-6 flex-1 mr-20 hover:shadow-2xl transition duration-300 text-center mb-8 lg:mb-0">
         <h2 className="text-4xl mb-4 text-center text-black font-bold">
           Package Details
         </h2>
@@ -184,8 +183,8 @@ function Form() {
       </div>
 
       {/* Booking Form Section */}
-      <div className="">
-        <div className="bg-gradient-to-br from-blue-200 to-blue-500 shadow-2xl rounded-lg p-6 w-[400px] flex-1 mt-8 mb-72 hover:shadow-2xl transition duration-300">
+      <div className="w-full lg:w-[400px]">
+        <div className="bg-gradient-to-br from-blue-200 to-blue-500 shadow-2xl rounded-lg p-6 w-full flex-1 mt-8 mb-72 hover:shadow-2xl transition duration-300">
           <h2 className="text-2xl mb-4 text-center text-blue-900 font-bold">
             Booking Form
           </h2>
@@ -231,27 +230,27 @@ function Form() {
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 font-semibold mb-2">
-                Total Amount
+                Date
               </label>
               <input
-                type="text"
+                type="date"
                 className="border-2 border-gray-400 p-2 rounded-lg w-full focus:outline-none focus:border-blue-500 hover:border-gray-600 transition duration-300"
-                name="amount"
-                value={`₹ ${amount}`}
-                readOnly
+                name="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                min={today} // Disables past dates
+                required
               />
             </div>
             <button
-              type="button"
               onClick={handlePayment}
-              className="bg-gradient-to-r from-green-500 to-teal-600 text-white font-semibold py-2 px-6 rounded-lg mt-4 inline-block shadow-lg transform transition-transform duration-200 hover:from-teal-600 hover:to-green-500 hover:-translate-y-1 w-full"
+              className="w-full bg-gradient-to-r from-green-400 to-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition duration-300"
             >
-              Pay Now
+              Make Payment
             </button>
           </form>
         </div>
       </div>
-
       <ToastContainer />
     </div>
   );

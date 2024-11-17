@@ -22,7 +22,7 @@ function EditPackage() {
     const fetchPackage = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/packages/${id}`
+          `https://tripplanner-1.onrender.com/api/packages/${id}`
         );
         setPackageData(response.data);
       } catch (error) {
@@ -87,14 +87,14 @@ function EditPackage() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/packages/${id}`,
+        `https://tripplanner-1.onrender.com/api/packages/${id}`,
         updatedPackage,
         {
           headers: { "Content-Type": "application/json" },
         }
       );
       setSuccessMessage("Package updated successfully!");
-      setTimeout(() => navigate(`/packagedetails/${id}`), 1500);
+      setTimeout(() => navigate(`/packagedetails`), 1500);
     } catch (error) {
       setErrorMessage("Error updating package. Please try again.");
       console.error("Error updating package:", error);
