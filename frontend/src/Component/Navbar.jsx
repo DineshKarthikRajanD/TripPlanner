@@ -135,6 +135,7 @@ const Navbar = () => {
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
+      console.log("Recognized text:", transcript);
       const detectedLocation = allowedLocations.find((location) =>
         transcript.toLowerCase().includes(location.toLowerCase())
       );
