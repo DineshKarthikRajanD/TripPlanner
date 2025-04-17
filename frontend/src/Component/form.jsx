@@ -40,15 +40,18 @@ function Form() {
   const storePaymentDetails = async (paymentId) => {
     const name = localStorage.getItem("name");
     try {
-      const response = await axios.post("https://tripplanner-1.onrender.com/payment", {
-        name,
-        mobile,
-        email,
-        packageTitle,
-        paymentId,
-        amount,
-        date, // Include date in payment details
-      });
+      const response = await axios.post(
+        "https://tripplanner-1.onrender.com/payment",
+        {
+          name,
+          mobile,
+          email,
+          packageTitle,
+          paymentId,
+          amount,
+          date, // Include date in payment details
+        }
+      );
       console.log("Payment details stored:", response.data);
       toast.success("Payment details stored successfully!");
     } catch (error) {
@@ -95,6 +98,7 @@ function Form() {
 
   const handlePayment = (e) => {
     e.preventDefault();
+
     if (!amount || isNaN(amount) || amount <= 0) {
       alert("Please enter a valid amount");
       return;
@@ -121,6 +125,12 @@ function Form() {
       },
       theme: {
         color: "#3399cc",
+      },
+      method: {
+        upi: true, // Enable UPI (GPay, PhonePe, etc.)
+        card: true, // Enable card payments
+        netbanking: true, // Enable netbanking
+        wallet: true,
       },
     };
 
